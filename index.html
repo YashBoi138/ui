@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Core</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+  <div class="jarvis-center">
+    <div class="outer-circle">
+      <div class="inner-circle"></div>
+      <div class="jarvis-text">Jarvis</div>
+    </div>
+    <div class="dot-grid-overlay"></div>
+  </div>
+
+  <!-- TIME WIDGET -->
+  <div id="time-widget" class="jarvis-widget orbitron">
+    <div class="corner top-left"></div>
+    <div class="corner top-right"></div>
+    <div class="corner bottom-left"></div>
+    <div class="corner bottom-right"></div>
+  
+    <div class="widget-header">Time</div>
+    <div class="widget-divider"></div>
+    <div class="widget-clock" id="clock">00:00</div>
+  </div>
+  
+  <!-- YOUTUBE WIDGET -->
+  <div id="youtube-widget" class="jarvis-widget orbitron">
+    <div class="corner top-left"></div>
+    <div class="corner top-right"></div>
+    <div class="corner bottom-left"></div>
+    <div class="corner bottom-right"></div>
+    <div class="widget-header">YOUTUBE</div>
+    <div class="widget-divider"></div>
+    <div class="youtube-container">
+        <iframe 
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+        title="YouTube Video Player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        ></iframe>
+    </div>
+  </div>
+   <!-- MAP WIDGET -->
+   <div id="map-widget" class="jarvis-widget orbitron">
+    <div class="corner top-left"></div>
+    <div class="corner top-right"></div>
+    <div class="corner bottom-left"></div>
+    <div class="corner bottom-right"></div>
+    <div class="widget-header">Map</div>
+    <div class="widget-divider"></div>
+    <div class="maps-container">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14007.628389752377!2d77.43577334999999!3d28.63254635!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1745471570444!5m2!1sen!2sin"
+        width="100%" height="250" frameborder="0" allowfullscreen="" loading="lazy"
+      ></iframe>
+    </div>
+  </div>
+
+  <!-- NOTEPAD WIDGET -->
+  <div id="notepad-widget" class="jarvis-widget orbitron">
+    <div class="corner top-left"></div>
+    <div class="corner top-right"></div>
+    <div class="corner bottom-left"></div>
+    <div class="corner bottom-right"></div>
+    <div class="widget-header">Notepad</div>
+    <div class="widget-divider"></div>
+    <textarea id="notepad" placeholder="Type your notes here..."></textarea>
+  </div>
+  <!-- 🔍 Search Result Widget -->
+<div id="search-result-widget" class="jarvis-widget orbitron">
+  <div class="corner top-left"></div>
+  <div class="corner top-right"></div>
+  <div class="corner bottom-left"></div>
+  <div class="corner bottom-right"></div>
+  <h2 class="widget-header">Search Result</h2>
+  <div id="search-result-content" class="widget-content">
+    <p>Waiting for your real-time query...</p>
+  </div>
+</div>
+<!-- CALCULATOR WIDGET -->
+<div id="calculator-widget" class="jarvis-widget orbitron">
+  <div class="corner top-left"></div>
+  <div class="corner top-right"></div>
+  <div class="corner bottom-left"></div>
+  <div class="corner bottom-right"></div>
+  <div class="widget-header">Calculator</div>
+  <div class="widget-divider"></div>
+  <div class="calculator-screen" id="calc-screen">0</div>
+  <div class="calculator-buttons">
+    <button>7</button><button>8</button><button>9</button><button>/</button>
+    <button>4</button><button>5</button><button>6</button><button>*</button>
+    <button>1</button><button>2</button><button>3</button><button>-</button>
+    <button>0</button><button>.</button><button>=</button><button>+</button>
+    <button id="clear">C</button>
+  </div>
+</div>
+<!-- SCHEDULE WIDGET -->
+<div id="schedule-widget" class="jarvis-widget orbitron">
+  <div class="corner top-left"></div>
+  <div class="corner top-right"></div>
+  <div class="corner bottom-left"></div>
+  <div class="corner bottom-right"></div>
+
+  <div class="widget-header">Schedule</div>
+  <div class="widget-divider"></div>
+  <div class="schedule-list">
+    <div class="schedule-item">
+      <span class="schedule-time">08:00 AM</span>
+      <span class="schedule-event">Morning Workout</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">10:30 AM</span>
+      <span class="schedule-event">Team Meeting</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">01:00 PM</span>
+      <span class="schedule-event">Lunch Break</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">03:45 PM</span>
+      <span class="schedule-event">Project Review</span>
+    </div>
+    <div class="schedule-item">
+      <span class="schedule-time">07:00 PM</span>
+      <span class="schedule-event">Call with Client</span>
+    </div>
+  </div>
+  <button id="add-widget-button">+ Add Widget</button>
+
+</div>
+<!-- WEATHER WIDGET -->
+<div id="weather-widget" class="jarvis-widget orbitron">
+  <div class="corner top-left"></div>
+  <div class="corner top-right"></div>
+  <div class="corner bottom-left"></div>
+  <div class="corner bottom-right"></div>
+  <div class="widget-header">Weather</div>
+  <div class="widget-divider"></div>
+  <div id="weather-info" class="widget-content">
+    <p>Loading weather...</p>
+  </div>
+</div>
+<!-- STOCK WIDGET -->
+<div id="stock-widget" class="jarvis-widget orbitron">
+  <div class="corner top-left"></div>
+  <div class="corner top-right"></div>
+  <div class="corner bottom-left"></div>
+  <div class="corner bottom-right"></div>
+  <div class="widget-header">Stock</div>
+  <div class="widget-divider"></div>
+  <canvas id="stockChart" width="250" height="250"></canvas>
+</div>
+<!-- SPOTIFY WIDGET -->
+<div id="spotify-widget" class="jarvis-widget orbitron">
+  <div class="corner top-left"></div>
+  <div class="corner top-right"></div>
+  <div class="corner bottom-left"></div>
+  <div class="corner bottom-right"></div>
+  <div class="widget-header">Spotify</div>
+  <div class="widget-divider"></div>
+  <div class="spotify-container">
+    <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" 
+            width="100%" height="250" frameborder="0" allowtransparency="true" 
+            allow="encrypted-media"></iframe>
+  </div>
+</div>
+<div id="whatsapp-widget" class="jarvis-widget orbitron">
+  <div class="corner top-left"></div>
+  <div class="corner top-right"></div>
+  <div class="corner bottom-left"></div>
+  <div class="corner bottom-right"></div>
+
+  <div class="widget-header">WhatsApp</div>
+  <div class="widget-divider"></div>
+
+  <p style="color:white; padding:10px;">Send a WhatsApp Message:</p>
+  <input type="text" id="whatsapp-number" placeholder="Enter phone number" />
+  <input type="text" id="whatsapp-message" placeholder="Your message..." />
+  <button onclick="sendWhatsAppMessage()">Send</button>
+</div>
+
+<script>
+  function sendWhatsAppMessage() {
+      const name = document.getElementById("recipient").value;
+      const message = document.getElementById("message").value;
+  
+      fetch("http://127.0.0.1:5000/send_whatsapp", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ name, message })
+      })
+      .then(response => response.json())
+      .then(data => {
+          alert("Message sent: " + data.status);
+      })
+      .catch(error => {
+          alert("Error sending message.");
+          console.error("Error:", error);
+      });
+  }
+  </script>
+
+
+
+  <script src="js/main.js"></script>
+</body>
+</html>
