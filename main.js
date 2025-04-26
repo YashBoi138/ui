@@ -31,7 +31,7 @@ function updateClock() {
   
   // Apply to all widgets
   window.onload = () => {
-    ['time-widget', 'map-widget', 'notepad-widget','youtube-widget','calculator-widget','schedule-widget','weather-widget','stock-widget','spotify-widget','whatsapp-widget'].forEach(id => {
+    ['time-widget', 'map-widget', 'notepad-widget','youtube-widget','calculator-widget','schedule-widget','weather-widget','stock-widget','spotify-widget','whatsapp-widget','football-widget'].forEach(id => {
       const el = document.getElementById(id);
       if (el) makeDraggable(el);
     });
@@ -169,4 +169,41 @@ async function getWeather() {
       }
     }
   });
-  
+  // Function to fetch football data (e.g., live scores or fixtures)
+async function getFootballData() {
+  const apiKey = ""; // Replace with your Football API key
+  const leagueId = "2021"; // Replace with the ID for the league (e.g., Premier League)
+
+  try {
+    const response = await fetch(`https://api.football-data.org/v4/matches?competitions=${leagueId}`, {
+      method: 'GET',
+      headers: {
+        'X-Auth-Token': apiKey
+      }
+    });
+    const data = await response.json();
+
+    if (data.matches && data.matches.length > 0) {
+      const match = data.matches[0]; // Get the first match (can be modified to show more)
+      const homeTeam = match.homeTeam.name;
+      const awayTeam = match.awayTeam.name;
+      const score = match.score.fullTime;
+
+      // Update football widget
+      document.getElementById('match-info').innerHTML = `
+        <p><strong>${homeTeam}</strong> vs <strong>${awayTeam}</strong></p>
+        <p>Score: ${score.homeTeam} - ${score.awayTeam}</p>
+        <p><small>Upcoming Match</small></p>
+      `;
+    } else {
+      document.getElementById('match-info').innerHTML = "<p>No live matches available.</p>";
+    }
+  } catch (error) {
+    document.getElementById('match-info').innerHTML = "<p>Failed to fetch football data.</p>";
+  }
+}
+
+// Add event listener for the refresh button
+document.getElementById('refresh-scores').addEventListener('click', () => {
+  getFootballData();
+});
