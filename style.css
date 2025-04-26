@@ -467,3 +467,21 @@ body {
     border-radius: 10px;
     border: none;
 }
+#football-widget button {
+  background-color: #00bfff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+#football-widget button:hover {
+  background-color: #0085a1;
+}
+#football-widget p{
+  color: white;
+}
