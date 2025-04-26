@@ -171,7 +171,7 @@ async function getWeather() {
   });
   // Function to fetch football data (e.g., live scores or fixtures)
 async function getFootballData() {
-  const apiKey = ""; // Replace with your Football API key
+  const apiKey = "12345678910"; // Replace with your Football API key
   const leagueId = "2021"; // Replace with the ID for the league (e.g., Premier League)
 
   try {
