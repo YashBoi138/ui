@@ -1,4 +1,5 @@
 // Clock
+
 function updateClock() {
     const now = new Date();
     let hours = now.getHours();
@@ -171,7 +172,7 @@ async function getWeather() {
   });
   // Function to fetch football data (e.g., live scores or fixtures)
 async function getFootballData() {
-  const apiKey = "12345678910"; // Replace with your Football API key
+  const apiKey = "e6431ac3a6d94b5582d30775148f4510"; // Replace with your Football API key
   const leagueId = "2021"; // Replace with the ID for the league (e.g., Premier League)
 
   try {
@@ -206,4 +207,21 @@ async function getFootballData() {
 // Add event listener for the refresh button
 document.getElementById('refresh-scores').addEventListener('click', () => {
   getFootballData();
+});
+
+
+
+
+window.addEventListener('load', () => {
+  const globeContainer = document.getElementById('globeViz');
+  if (globeContainer) {
+    const myGlobe = Globe()
+      (globeContainer)
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+      .backgroundColor('rgba(0,0,0,0)')
+      .width(globeContainer.offsetWidth)
+      .height(globeContainer.offsetHeight)
+      .autoRotate(true)
+      .autoRotateSpeed(0.5);
+  }
 });
