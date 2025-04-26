@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+  <script src="https://unpkg.com/globe.gl"></script>
 
 </head>
 <body>
@@ -223,10 +225,52 @@
   </div>
   <button id="refresh-scores">Refresh</button>
 </div>
+<div id="globe-widget" class="jarvis-widget orbitron" style="position:fixed; top:200px; left:200px; width:400px; height:400px;">
+  <div class="corner top-left"></div>
+  <div class="corner top-right"></div>
+  <div class="corner bottom-left"></div>
+  <div class="corner bottom-right"></div>
+  <div class="widget-header">Earth Globe</div>
+  <div class="widget-divider"></div>
 
+  <div id="globeViz" style="width: 100%; height: 300px; background: transparent;"></div>
+</div>
+
+<script src="https://unpkg.com/three-globe"></script>
+<script>
+  window.addEventListener('load', () => {
+    const globeContainer = document.getElementById('globeViz');
+    if (globeContainer) {
+      const myGlobe = Globe()
+        (globeContainer)
+        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+        .backgroundColor('rgba(0,0,0,0)')
+        .width(globeContainer.offsetWidth)
+        .height(globeContainer.offsetHeight)
+        .autoRotate(true)
+        .autoRotateSpeed(0.8)
+        .atmosphereColor('#00ffff')
+        .atmosphereAltitude(0.25); // a slight glow
+
+      // Mark points (locations) on the globe
+      const points = [
+        { lat: 40.7128, lng: -74.0060, label: 'New York', color: '#ff0000' }, // New York
+        { lat: 51.5074, lng: -0.1278, label: 'London', color: '#00ff00' }, // London
+        { lat: 34.0522, lng: -118.2437, label: 'Los Angeles', color: '#0000ff' }, // Los Angeles
+        { lat: -33.8688, lng: 151.2093, label: 'Sydney', color: '#ff00ff' } // Sydney
+      ];
+
+      // Add points to the globe
+      myGlobe.pointsData(points)
+        .pointRadius(0.2)  // Marker radius
+        .pointColor(d => d.color)  // Marker color based on point data
+        .pointLabel(d => d.label)  // Marker label
+        .pointAltitude(0.1);  // Height of the marker above the globe surface
+    }
+  });
+</script>
 
 
   <script src="main.js"></script>
 </body>
 </html>
-
