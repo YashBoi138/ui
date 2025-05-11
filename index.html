@@ -1,276 +1,884 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Core</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
-  <script src="https://unpkg.com/globe.gl"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS - Your Personal AI Assistant</title>
+    <style>
+        :root {
+            --primary: #0cf;
+            --primary-dark: #00a6cc;
+            --secondary: #9013fe;
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --light: #f0f0f0;
+            --glow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 30% 20%, rgba(0, 204, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(144, 19, 254, 0.05) 0%, transparent 40%);
+        }
+        
+        header {
+            background-color: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            text-shadow: var(--glow);
+        }
+        
+        .logo span {
+            color: var(--light);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+            box-shadow: var(--glow);
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 204, 255, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 204, 255, 0.5);
+        }
+        
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero h1 span {
+            color: var(--primary);
+            text-shadow: var(--glow);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .hero-visual {
+            position: relative;
+            width: 450px;
+            height: 450px;
+        }
+        
+        .circle-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 204, 255, 0.2);
+            animation: rotate 25s linear infinite;
+        }
+        
+        .circle-animation:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-color: rgba(144, 19, 254, 0.2);
+            animation-direction: reverse;
+            animation-duration: 20s;
+        }
+        
+        .circle-animation:nth-child(3) {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            border-color: rgba(0, 204, 255, 0.4);
+            animation-duration: 15s;
+        }
+        
+        .pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 0.7;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            50% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0.7;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
+        
+        .features {
+            padding: 100px 50px;
+            background-color: var(--dark);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--light);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            box-shadow: var(--glow);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 204, 255, 0.2);
+            border-color: rgba(0, 204, 255, 0.3);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 204, 255, 0.1), rgba(144, 19, 254, 0.1));
+            clip-path: circle(60px at 80% 20%);
+            transition: all 0.5s ease;
+            z-index: 0;
+        }
+        
+        .feature-card:hover::before {
+            clip-path: circle(300px at 80% -20%);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feature-icon i {
+            color: white;
+            font-size: 28px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feature-card p {
+            color: #bbb;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feature-card ul {
+            list-style-type: none;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feature-card li {
+            margin-bottom: 8px;
+            color: #bbb;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-card li::before {
+            content: 'Ã¢â‚¬Â¢';
+            color: var(--primary);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .demo-section {
+            padding: 100px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .terminal-container {
+            max-width: 900px;
+            margin: 40px auto 0;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 204, 255, 0.3);
+            position: relative;
+        }
+        
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .terminal-button.red {
+            background-color: #ff5f56;
+        }
+        
+        .terminal-button.yellow {
+            background-color: #ffbd2e;
+        }
+        
+        .terminal-button.green {
+            background-color: #27c93f;
+        }
+        
+        .terminal-title {
+            margin-left: 20px;
+            color: #aaa;
+            font-size: 0.9rem;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .terminal-content {
+            font-family: 'Courier New', monospace;
+            color: #ddd;
+            line-height: 1.5;
+        }
+        
+        .terminal-line {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .terminal-prompt {
+            color: var(--primary);
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        
+        .terminal-text {
+            flex-grow: 1;
+        }
+        
+        .typing {
+            border-right: 2px solid var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
+        }
+        
+        .response {
+            display: none;
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary) }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0 }
+            to { opacity: 1 }
+        }
+        
+        .cta-section {
+            padding: 100px 50px;
+            text-align: center;
+            background: linear-gradient(rgba(10, 10, 10, 0.8), rgba(18, 18, 18, 0.9)), url('https://source.unsplash.com/random/?technology,future') center/cover no-repeat;
+        }
+        
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .cta-content p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .secondary-button {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .secondary-button:hover {
+            background-color: rgba(0, 204, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 204, 255, 0.2);
+        }
+        
+        footer {
+            background-color: var(--darker);
+            padding: 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+        
+        .footer-column h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-column ul {
+            list-style-type: none;
+        }
+        
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column a {
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .footer-bottom p {
+            color: #888;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 1024px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 150px 50px 50px;
+                height: auto;
+            }
+            
+            .hero-content {
+                margin-bottom: 50px;
+            }
+            
+            .hero-visual {
+                width: 350px;
+                height: 350px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                padding: 120px 30px 50px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-visual {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .features, .demo-section, .cta-section {
+                padding: 70px 30px;
+            }
+            
+            .terminal-container {
+                padding: 15px;
+            }
+        }
 
+        /* Animation delay classes for terminal responses */
+        .delay-1 {
+            animation-delay: 3s;
+        }
+        .delay-2 {
+            animation-delay: 4s;
+        }
+        .delay-3 {
+            animation-delay: 6s;
+        }
+        .delay-4 {
+            animation-delay: 8s;
+        }
+    </style>
 </head>
 <body>
-  <div class="jarvis-center">
-    <div class="outer-circle">
-      <div class="inner-circle"></div>
-      <div class="jarvis-text">Jarvis</div>
-    </div>
-    <div class="dot-grid-overlay"></div>
-  </div>
+    <header>
+        <nav>
+            <div class="logo">JARVIS<span>AI</span></div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#demo">Demo</a>
+                <a href="#contribute">Contribute</a>
+                <a href="#roadmap">Roadmap</a>
+            </div>
+            <a href="https://discord.gg/fBPUcsZ9Tr" class="cta-button">Join Project</a>
+        </nav>
+    </header>
 
-  <!-- TIME WIDGET -->
-  <div id="time-widget" class="jarvis-widget orbitron">
-    <div class="corner top-left"></div>
-    <div class="corner top-right"></div>
-    <div class="corner bottom-left"></div>
-    <div class="corner bottom-right"></div>
-  
-    <div class="widget-header">Time</div>
-    <div class="widget-divider"></div>
-    <div class="widget-clock" id="clock">00:00</div>
-  </div>
-  
-  <!-- YOUTUBE WIDGET -->
-  <div id="youtube-widget" class="jarvis-widget orbitron">
-    <div class="corner top-left"></div>
-    <div class="corner top-right"></div>
-    <div class="corner bottom-left"></div>
-    <div class="corner bottom-right"></div>
-    <div class="widget-header">YOUTUBE</div>
-    <div class="widget-divider"></div>
-    <div class="youtube-container">
-        <iframe 
-        src="https://m.youtube.com/"
-        title="YouTube Video Player"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        ></iframe>
-    </div>
-  </div>
-   <!-- MAP WIDGET -->
-   <div id="map-widget" class="jarvis-widget orbitron">
-    <div class="corner top-left"></div>
-    <div class="corner top-right"></div>
-    <div class="corner bottom-left"></div>
-    <div class="corner bottom-right"></div>
-    <div class="widget-header">Map</div>
-    <div class="widget-divider"></div>
-    <div class="maps-container">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14007.628389752377!2d77.43577334999999!3d28.63254635!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1745471570444!5m2!1sen!2sin"
-        width="100%" height="250" frameborder="0" allowfullscreen="" loading="lazy"
-      ></iframe>
-    </div>
-  </div>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Meet Your <span>Personal AI Assistant</span></h1>
+            <p>JARVIS is an advanced AI assistant that helps you control your digital life. From managing your apps and media to boosting your productivity and securing your data - all with simple voice commands.</p>
+            <a href="#join" class="cta-button">Join Development</a>
+        </div>
+        <div class="hero-visual">
+            <div class="circle-animation"></div>
+            <div class="circle-animation"></div>
+            <div class="circle-animation"></div>
+            <div class="pulse"></div>
+        </div>
+    </section>
 
-  <!-- NOTEPAD WIDGET -->
-  <div id="notepad-widget" class="jarvis-widget orbitron">
-    <div class="corner top-left"></div>
-    <div class="corner top-right"></div>
-    <div class="corner bottom-left"></div>
-    <div class="corner bottom-right"></div>
-    <div class="widget-header">Notepad</div>
-    <div class="widget-divider"></div>
-    <textarea id="notepad" placeholder="Type your notes here..."></textarea>
-  </div>
-  <!-- 🔍 Search Result Widget -->
-<div id="search-result-widget" class="jarvis-widget orbitron">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
-  <h2 class="widget-header">Search Result</h2>
-  <div id="search-result-content" class="widget-content">
-    <p>Waiting for your real-time query...</p>
-  </div>
-</div>
-<!-- CALCULATOR WIDGET -->
-<div id="calculator-widget" class="jarvis-widget orbitron">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
-  <div class="widget-header">Calculator</div>
-  <div class="widget-divider"></div>
-  <div class="calculator-screen" id="calc-screen">0</div>
-  <div class="calculator-buttons">
-    <button>7</button><button>8</button><button>9</button><button>/</button>
-    <button>4</button><button>5</button><button>6</button><button>*</button>
-    <button>1</button><button>2</button><button>3</button><button>-</button>
-    <button>0</button><button>.</button><button>=</button><button>+</button>
-    <button id="clear">C</button>
-  </div>
-</div>
-<!-- SCHEDULE WIDGET -->
-<div id="schedule-widget" class="jarvis-widget orbitron">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
+    <section class="features" id="features">
+        <div class="section-title">
+            <h2>Advanced Capabilities</h2>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i>Ã°Å¸Å½â„¢Ã¯Â¸Â</i>
+                </div>
+                <h3>Core Assistant Features</h3>
+                <p>Control your digital environment with a simple voice command.</p>
+                <ul>
+                    <li>Background Listener with "Jarvis" wake-word</li>
+                    <li>Smart App Control</li>
+                    <li>YouTube Search & Playback</li>
+                    <li>Web Search & Summaries</li>
+                    <li>Reminders & Timers</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i>Ã°Å¸Å½Â®</i>
+                </div>
+                <h3>Media & Entertainment</h3>
+                <p>Enhance your entertainment experience with intelligent control.</p>
+                <ul>
+                    <li>Music Player Control</li>
+                    <li>Movie Recommendations</li>
+                    <li>Trivia & Games</li>
+                    <li>Random Facts & Horoscopes</li>
+                    <li>3D Renderer for Models</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i>Ã¢Å¡Â¡</i>
+                </div>
+                <h3>Productivity Tools</h3>
+                <p>Boost your efficiency with smart productivity enhancement.</p>
+                <ul>
+                    <li>Flashcards & Quizzes</li>
+                    <li>OCR & PDF Management</li>
+                    <li>Recipe Suggestions</li>
+                    <li>Mind-Mapping Tool</li>
+                    <li>Code Compilation & Run</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i>Ã°Å¸â€â€™</i>
+                </div>
+                <h3>Security & Utilities</h3>
+                <p>Protect your digital life with advanced security features.</p>
+                <ul>
+                    <li>Password Manager</li>
+                    <li>VPN Control</li>
+                    <li>Internet Speed Checker</li>
+                    <li>IP & Location Finder</li>
+                    <li>Automatic Printouts</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i>Ã°Å¸Â§ </i>
+                </div>
+                <h3>Self-Learning & Autonomy</h3>
+                <p>An assistant that evolves with your usage patterns.</p>
+                <ul>
+                    <li>Memory Store</li>
+                    <li>Contextual Prompting</li>
+                    <li>Feedback Loop</li>
+                    <li>Dynamic Task Learning</li>
+                    <li>Autonomous Planner</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i>Ã°Å¸â€œÅ¾</i>
+                </div>
+                <h3>Call Proxy & VoIP</h3>
+                <p>Advanced call management and voice commands.</p>
+                <ul>
+                    <li>Asterisk-Backed Call Manager</li>
+                    <li>TTS/STT Bridge</li>
+                    <li>Contacts Lookup</li>
+                    <li>Voice Commands for Calls</li>
+                    <li>Call Screening</li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
-  <div class="widget-header">Schedule</div>
-  <div class="widget-divider"></div>
-  <div class="schedule-list">
-    <div class="schedule-item">
-      <span class="schedule-time">08:00 AM</span>
-      <span class="schedule-event">Morning Workout</span>
-    </div>
-    <div class="schedule-item">
-      <span class="schedule-time">10:30 AM</span>
-      <span class="schedule-event">Team Meeting</span>
-    </div>
-    <div class="schedule-item">
-      <span class="schedule-time">01:00 PM</span>
-      <span class="schedule-event">Lunch Break</span>
-    </div>
-    <div class="schedule-item">
-      <span class="schedule-time">03:45 PM</span>
-      <span class="schedule-event">Project Review</span>
-    </div>
-    <div class="schedule-item">
-      <span class="schedule-time">07:00 PM</span>
-      <span class="schedule-event">Call with Client</span>
-    </div>
-  </div>
-  <button id="add-widget-button">+ Add Widget</button>
+    <section class="demo-section" id="demo">
+        <div class="section-title">
+            <h2>See JARVIS in Action</h2>
+        </div>
+        
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <div class="terminal-button red"></div>
+                    <div class="terminal-button yellow"></div>
+                    <div class="terminal-button green"></div>
+                </div>
+                <div class="terminal-title">JARVIS Assistant Demo</div>
+            </div>
+            
+            <div class="terminal-content">
+                <div class="terminal-line">
+                    <div class="terminal-prompt">></div>
+                    <div class="terminal-text typing">Hey Jarvis, what's the weather today?</div>
+                </div>
+                
+                <div class="terminal-line response delay-1">
+                    <div class="terminal-prompt">JARVIS:</div>
+                    <div class="terminal-text">Good morning! Currently it's 72Ã‚Â°F and sunny in your location. The forecast shows a high of 78Ã‚Â°F with a 10% chance of rain later this evening.</div>
+                </div>
+                
+                <div class="terminal-line response delay-2">
+                    <div class="terminal-prompt">></div>
+                    <div class="terminal-text">Play the latest MrBeast video on YouTube</div>
+                </div>
+                
+                <div class="terminal-line response delay-3">
+                    <div class="terminal-prompt">JARVIS:</div>
+                    <div class="terminal-text">Opening YouTube and playing "I Survived 50 Hours In Antarctica" by MrBeast, uploaded yesterday.</div>
+                </div>
+                
+                <div class="terminal-line response delay-4">
+                    <div class="terminal-prompt">></div>
+                    <div class="terminal-text">Set a reminder to call mom at 6pm</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-</div>
-<!-- WEATHER WIDGET -->
-<div id="weather-widget" class="jarvis-widget orbitron">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
-  <div class="widget-header">Weather</div>
-  <div class="widget-divider"></div>
-  <div id="weather-info" class="widget-content">
-    <p>Loading weather...</p>
-  </div>
-</div>
-<!-- STOCK WIDGET -->
-<div id="stock-widget" class="jarvis-widget orbitron">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
-  <div class="widget-header">Stock</div>
-  <div class="widget-divider"></div>
-  <canvas id="stockChart" width="250" height="250"></canvas>
-</div>
-<!-- SPOTIFY WIDGET -->
-<div id="spotify-widget" class="jarvis-widget orbitron">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
-  <div class="widget-header">Spotify</div>
-  <div class="widget-divider"></div>
-  <div class="spotify-container">
-    <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" 
-            width="100%" height="250" frameborder="0" allowtransparency="true" 
-            allow="encrypted-media"></iframe>
-  </div>
-</div>
-<div id="whatsapp-widget" class="jarvis-widget orbitron">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
+    <section class="cta-section" id="join">
+        <div class="cta-content">
+            <h2>Join Our Development Community</h2>
+            <p>We're building the future of personal AI assistants. Contribute your skills to help make JARVIS even more powerful and accessible to everyone.</p>
+            <div class="cta-buttons">
+                <a href="https://discord.gg/fBPUcsZ9Tr" class="cta-button">Join Discord</a>
+                <a href="#" class="secondary-button">View on GitHub</a>
+            </div>
+        </div>
+    </section>
 
-  <div class="widget-header">WhatsApp</div>
-  <div class="widget-divider"></div>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>JARVIS AI</h3>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Roadmap</a></li>
+                    <li><a href="#">Contribute</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="#">Discord</a></li>
+                    <li><a href="#">GitHub</a></li>
+                    <li><a href="#">Forums</a></li>
+                    <li><a href="#">Events</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Licenses</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 JARVIS AI Project. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><span>Ã°Å¸ÂÂ¦</span></a>
+                <a href="#"><span>Ã°Å¸â€œÂ±</span></a>
+                <a href="#"><span>Ã°Å¸â€œÂº</span></a>
+                <a href="#"><span>Ã°Å¸â€™Â»</span></a>
+            </div>
+        </div>
+    </footer>
 
-  <p style="color:white; padding:10px;">Send a WhatsApp Message:</p>
-  <input type="text" id="whatsapp-number" placeholder="Enter phone number" />
-  <input type="text" id="whatsapp-message" placeholder="Your message..." />
-  <button onclick="sendWhatsAppMessage()">Send</button>
-</div>
-
-<script>
-  function sendWhatsAppMessage() {
-      const name = document.getElementById("recipient").value;
-      const message = document.getElementById("message").value;
-  
-      fetch("http://127.0.0.1:5000/send_whatsapp", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ name, message })
-      })
-      .then(response => response.json())
-      .then(data => {
-          alert("Message sent: " + data.status);
-      })
-      .catch(error => {
-          alert("Error sending message.");
-          console.error("Error:", error);
-      });
-  }
-  </script>
-<div id="football-widget" class="jarvis-widget orbitron">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
-  <div class="widget-header">Football Match</div>
-  <div class="widget-divider"></div>
-  <div id="match-info">
-      <p>Loading match info...</p>
-  </div>
-  <button id="refresh-scores">Refresh</button>
-</div>
-<div id="globe-widget" class="jarvis-widget orbitron" style="position:fixed; top:200px; left:200px; width:400px; height:400px;">
-  <div class="corner top-left"></div>
-  <div class="corner top-right"></div>
-  <div class="corner bottom-left"></div>
-  <div class="corner bottom-right"></div>
-  <div class="widget-header">Earth Globe</div>
-  <div class="widget-divider"></div>
-
-  <div id="globeViz" style="width: 100%; height: 300px; background: transparent;"></div>
-</div>
-
-<script src="https://unpkg.com/three-globe"></script>
-<script>
-  window.addEventListener('load', () => {
-    const globeContainer = document.getElementById('globeViz');
-    if (globeContainer) {
-      const myGlobe = Globe()
-        (globeContainer)
-        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-        .backgroundColor('rgba(0,0,0,0)')
-        .width(globeContainer.offsetWidth)
-        .height(globeContainer.offsetHeight)
-        .autoRotate(true)
-        .autoRotateSpeed(0.8)
-        .atmosphereColor('#00ffff')
-        .atmosphereAltitude(0.25); // a slight glow
-
-      // Mark points (locations) on the globe
-      const points = [
-        { lat: 40.7128, lng: -74.0060, label: 'New York', color: '#ff0000' }, // New York
-        { lat: 51.5074, lng: -0.1278, label: 'London', color: '#00ff00' }, // London
-        { lat: 34.0522, lng: -118.2437, label: 'Los Angeles', color: '#0000ff' }, // Los Angeles
-        { lat: -33.8688, lng: 151.2093, label: 'Sydney', color: '#ff00ff' } // Sydney
-      ];
-
-      // Add points to the globe
-      myGlobe.pointsData(points)
-        .pointRadius(0.2)  // Marker radius
-        .pointColor(d => d.color)  // Marker color based on point data
-        .pointLabel(d => d.label)  // Marker label
-        .pointAltitude(0.1);  // Height of the marker above the globe surface
-    }
-  });
-</script>
-
-
-  <script src="main.js"></script>
+    <script>
+        // Add animation for terminal responses
+        document.addEventListener('DOMContentLoaded', function() {
+            const responses = document.querySelectorAll('.response');
+            
+            setTimeout(() => {
+                responses.forEach(response => {
+                    response.style.display = 'flex';
+                });
+            }, 3000);
+        });
+    </script>
 </body>
 </html>
